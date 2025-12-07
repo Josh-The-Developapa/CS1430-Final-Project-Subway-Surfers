@@ -12,16 +12,6 @@
 
 std::map<char, std::vector<int>> FONT_5X7;
 
-//************************************************************
-// description:Initializes the FONT_5X7 map with hexadecimal *
-//              values representing the 5x7 bitmap patterns  *
-//              for alphanumeric characters and symbols.     *
-// return: void                                              *
-// precondition: The FONT_5X7 map must be declared and       *
-//               accessible in the current scope.            *
-// postcondition: FONT_5X7 is populated with character keys  *
-//                mapped to their specific 5x7 hex vectors.  *
-//************************************************************
 void initializeFont() {
     FONT_5X7 = {
         {'A', {0x70, 0x88, 0x88, 0xF8, 0x88, 0x88, 0x88}},
