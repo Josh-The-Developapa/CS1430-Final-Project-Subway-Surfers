@@ -1,58 +1,22 @@
-# Detect operating system
-ifeq ($(OS),Windows_NT)
-    DETECTED_OS := Windows
-else
-    DETECTED_OS := $(shell uname -s)
-endif
-
 # Compiler and flags
 CXX = g++
-CXXFLAGS = -std=c++11 -Wall
+CXXFLAGS = -std=c++11 -Wall \
+	-I/opt/homebrew/include \
+	-I/opt/homebrew/opt/sdl2/include \
+	-I/opt/homebrew/opt/sdl2_mixer/include
 
-# Platform-specific settings
-ifeq ($(DETECTED_OS),Windows)
-    # Windows-specific settings
-    INCLUDE_DIRS = -IC:/SDL2/include
-    LIB_DIRS = -LC:/SDL2/lib
-    LIBS = -lmingw32 -lSDL2main -lSDL2 -lSDL2_mixer
-    TARGET = Game_Executable.exe
-    MKDIR = if not exist $(subst /,\,$(BUILD_DIR)) mkdir $(subst /,\,$(BUILD_DIR))
-    RM = rmdir /s /q
-    PATH_SEP = \\
-    RUN_CMD = $(TARGET)
-else ifeq ($(DETECTED_OS),Darwin)
-    # macOS-specific settings
-    INCLUDE_DIRS = -I/opt/homebrew/include \
-                   -I/opt/homebrew/opt/sdl2/include \
-                   -I/opt/homebrew/opt/sdl2_mixer/include
-    LIB_DIRS = -L/opt/homebrew/lib \
-               -L/opt/homebrew/opt/sdl2/lib \
-               -L/opt/homebrew/opt/sdl2_mixer/lib
-    LIBS = -lSDL2 -lSDL2_mixer
-    TARGET = Game_Executable
-    MKDIR = mkdir -p $(BUILD_DIR)
-    RM = rm -rf
-    PATH_SEP = /
-    RUN_CMD = ./$(TARGET)
-else
-    # Linux-specific settings
-    INCLUDE_DIRS = -I/usr/include/SDL2
-    LIB_DIRS = -L/usr/lib
-    LIBS = -lSDL2 -lSDL2_mixer
-    TARGET = Game_Executable
-    MKDIR = mkdir -p $(BUILD_DIR)
-    RM = rm -rf
-    PATH_SEP = /
-    RUN_CMD = ./$(TARGET)
-endif
+LDFLAGS = -L/opt/homebrew/lib \
+	-L/opt/homebrew/opt/sdl2/lib \
+	-L/opt/homebrew/opt/sdl2_mixer/lib
 
-# Add include directories to compiler flags
-CXXFLAGS += $(INCLUDE_DIRS)
-LDFLAGS = $(LIB_DIRS)
+LIBS = -lSDL2 -lSDL2_mixer
 
 # Directories
 SRC_DIR = src
 BUILD_DIR = build
+
+# Target executable
+TARGET = Game_Executable
 
 # Source files
 SOURCES = $(SRC_DIR)/main.cpp \
@@ -76,7 +40,7 @@ all: $(TARGET)
 
 # Create build directory if it doesn't exist
 $(BUILD_DIR):
-	$(MKDIR)
+	mkdir -p $(BUILD_DIR)
 
 # Link the executable
 $(TARGET): $(BUILD_DIR) $(OBJECTS)
@@ -88,22 +52,11 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp $(HEADERS)
 
 # Clean build files
 clean:
-ifeq ($(DETECTED_OS),Windows)
-	$(RM) $(subst /,\,$(BUILD_DIR)) 2>nul || exit 0
-	del /f /q $(TARGET) 2>nul || exit 0
-else
-	$(RM) $(BUILD_DIR) $(TARGET)
-endif
+	rm -rf $(BUILD_DIR) $(TARGET)
 
 # Run the game
 run: $(TARGET)
-	$(RUN_CMD)
+	./$(TARGET)
 
 # Phony targets
 .PHONY: all clean run
-
-# Display detected OS (helpful for debugging)
-info:
-	@echo Detected OS: $(DETECTED_OS)
-	@echo Target: $(TARGET)
-	@echo Compiler: $(CXX)
