@@ -1,3 +1,13 @@
+
+/*
+* Author: Group [N1.02] Defend Strator
+* Assignment Title: Final Project
+* Assignment Description: An infinite runner
+* Due Date: 12/07/25
+* Date Created: 12/14/2025
+* Date Last Modified: 12/07/2025
+*/
+
 #include "Constants.h"
 
 std::map<char, std::vector<int>> FONT_5X7;
